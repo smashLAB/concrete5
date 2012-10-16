@@ -38,10 +38,16 @@
 		
 		public function getJavaScriptStrings() {
 			return array(
-				'image-required' => t('You must select an image.')
+			'image-required' => t('You must select an image.'),
+			'alt-required' => t('You must specifiy a tooltip/alt text')
 			);
 		}
 	
+	public function view(){
+		$fv = $this->getFileObject()->getVersion();
+		$this->set('strCaption', $fv->getDescription());
+	}
+
 	
 		function getFileID() {return $this->fID;}
 		function getFileOnstateID() {return $this->fOnstateID;}
@@ -114,7 +120,7 @@
 				$sizeStr = $size[3];
 			}
 			
-			$img = "<img border=\"0\" class=\"ccm-image-block\" alt=\"{$this->altText}\" src=\"{$relPath}\" {$sizeStr} ";
+			$img = "<img border=\"0\" class=\"ccm-image-block\" alt=\"{$this->altText}\" src=\"{$relPath}\" {$sizeStr} title=\"{$this->altText}\" ";
 			$img .= ($align) ? "align=\"{$align}\" " : '';
 			
 			$img .= ($style) ? "style=\"{$style}\" " : '';
@@ -136,12 +142,13 @@
 				$img .= " onmouseout=\"this.src = '{$relPath}'\" ";
 			}
 			
-			$img .= ($id) ? "id=\"{$id}\" " : "";
+			$img .= " data-fid=\"$f->fID\"";
+			$img .= ($id) ? " id=\"{$id}\" " : "";
 			$img .= "/>";
 			
 			$linkURL = $this->getLinkURL();
 			if (!empty($linkURL)) {
-				$img = "<a href=\"{$linkURL}\">" . $img ."</a>";
+				$img = "<a href=\"{$linkURL}\" title=\"{$this->altText}\">" . $img ."</a>";
 			}
 			return $img;
 		}
